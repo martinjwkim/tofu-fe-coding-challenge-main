@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useState, useMemo } from "react";
 import { ChevronUpDownIcon, XMarkIcon } from "@heroicons/react/20/solid";
 import {
   Listbox,
@@ -16,6 +16,17 @@ type SettingsProps = {
   content: ShapedContentData;
   campaign: ShapedCampaignData;
 };
+
+/** Derive SelectedTarget from content_params.targets (persisted on content). */
+function selectedTargetFromContent(
+  contentTargets: Record<string, string> | undefined
+): SelectedTarget {
+  if (!contentTargets || typeof contentTargets !== "object") return null;
+  const entries = Object.entries(contentTargets);
+  if (entries.length === 0) return null;
+  const [groupName, value] = entries[0];
+  return { groupName, value };
+}
 
 /** Flatten campaign.targets (e.g. [{ "Group": ["A", "B"] }]) to { groupName, value }[]. */
 export function flattenTargets(
@@ -116,7 +127,9 @@ const Settings = ({ content, campaign }: SettingsProps) => {
   const { updateContentGroup } = useUpdateContentGroup();
   const { updateContent } = useUpdateContent();
   const { generateContent, isLoading: isGenerating } = useContentGeneration();
-  const [selectedTarget, setSelectedTarget] = useState<SelectedTarget>(null);
+
+  const [selectedTarget, setSelectedTarget] = useState<SelectedTarget>(selectedTargetFromContent(content.targets));
+
 
   const selectedComponents = useMemo(
     () => Object.entries(content.components ?? {}),
@@ -224,7 +237,7 @@ const Settings = ({ content, campaign }: SettingsProps) => {
               paddingB: "pb-1",
             }}
             iconPosition="right"
-            initOpen={false}
+            initOpen={!!selectedTarget}
           >
             <div className="flex flex-col gap-y-1 mt-6 text-fontcolor-default">
               <h3 className="font-medium mb-3">
