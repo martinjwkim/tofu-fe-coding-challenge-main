@@ -25,18 +25,9 @@ export async function PATCH(
       return NextResponse.json({ error: "Content not found" }, { status: 404 });
     }
 
-    // Handle component updates
-    if (updates.components) {
-      // Initialize components if it doesn't exist or is null
-      if (!contents[contentIndex].components) {
-        contents[contentIndex].components = {};
-      }
-
-      // Merge components
-      contents[contentIndex].components = {
-        ...contents[contentIndex].components,
-        ...updates.components,
-      };
+    // Handle component updates - full replacement (not merge) so removals are respected
+    if (updates.components !== undefined) {
+      contents[contentIndex].components = { ...updates.components };
     }
 
     // Handle content_params updates

@@ -117,7 +117,7 @@ export const shapedContentData = (
 
   return {
     contentId: content.id,
-    contentGroup: content?.content_group ?? "",
+    contentGroup: content?.content_group ?? 0,
     campaignId: content?.campaign ?? "",
     contentName: content?.content_name ?? "",
     contentGroupName: contentGroup.content_group_name,
