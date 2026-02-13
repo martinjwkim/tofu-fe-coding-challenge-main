@@ -90,20 +90,20 @@ export const initialContentState: Content = {
 };
 
 export const initialCampaignState: ShapedCampaignData = {
-  [CampaignKeys.campaignId]: 0,
-  [CampaignKeys.playbookId]: 0,
-  [CampaignKeys.campaignName]: "",
-  [CampaignKeys.campaignGoal]: "",
-  [CampaignKeys.campaignStage]: "",
-  [CampaignKeys.contentGroups]: [],
-  [CampaignKeys.targets]: [],
-  [CampaignKeys.assets]: {},
-  [CampaignKeys.foundationModel]: "",
-  [CampaignKeys.allSelectedTargets]: [],
-  [CampaignKeys.customInstructions]: [],
-  [CampaignKeys.genStatus]: {},
-  [CampaignKeys.enableAutoSync]: false,
-  [CampaignKeys.inboundLandingPages]: {
+  campaignId: 0,
+  playbookId: 0,
+  campaignName: "",
+  campaignGoal: "",
+  campaignStage: "",
+  contentGroups: [],
+  targets: [],
+  assets: {},
+  foundationModel: "",
+  allSelectedTargets: [],
+  customInstructions: [],
+  genStatus: {},
+  enableAutoSync: false,
+  inboundLandingPages: {
     enabled: false,
   },
 };
@@ -116,59 +116,54 @@ export const shapedContentData = (
   const { content_group_params, components } = contentGroup;
 
   return {
-    [Keys.contentId]: content.id,
-    [Keys.contentGroup]: content?.content_group ?? "",
-    [Keys.campaignId]: content?.campaign ?? "",
-    [Keys.contentName]: content?.content_name ?? "",
-    [Keys.contentGroupName]: contentGroup.content_group_name,
-    [Keys.contentType]: content_group_params.content_type,
-    [Keys.contentSourceUploadMethod]:
-      content_group_params.content_source_upload_method,
-    [Keys.contentSourceFormat]: content_group_params.content_source_format,
-    [Keys.contentSource]: content_group_params.content_source ?? "",
-    [Keys.contentSourceCopy]: content_group_params.content_source_copy ?? "",
-    [Keys.repurposeTemplateContentSourceCopy]:
-      content_group_params.repurpose_template_content_source_copy ?? "",
-    [Keys.subjectLineOnlyContentSourceCopy]:
-      content_group_params.subject_line_only_content_source_copy ?? null,
-    [Keys.slateRepurposeTemplateContentSourceCopy]:
-      content_group_params.slate_repurpose_template_content_source_copy ?? null,
-    [Keys.targets]: content_params?.targets ?? {},
-    [Keys.customInstructions]: content_group_params.custom_instructions ?? [],
-    [Keys.template_settings]: content_group_params.template_settings ?? null,
-    [Keys.components]: components,
-    [Keys.results]: content.results,
-    [Keys.initialSetup]: content_group_params.initialSetup ?? undefined,
-    [Keys.template]: content_group_params.template ?? null,
-    [Keys.contentCollection]: content_group_params.content_collection ?? null,
-    [Keys.reviewedContentList]:
+    contentId: content.id,
+    contentGroup: content?.content_group ?? "",
+    campaignId: content?.campaign ?? "",
+    contentName: content?.content_name ?? "",
+    contentGroupName: contentGroup.content_group_name,
+    contentType: content_group_params.content_type,
+    contentSourceUploadMethod: content_group_params.content_source_upload_method,
+    contentSourceFormat: content_group_params.content_source_format,
+    contentSource: content_group_params.content_source ?? "",
+    contentSourceCopy: content_group_params.content_source_copy ?? "",
+    repurposeTemplateContentSourceCopy: content_group_params.repurpose_template_content_source_copy ?? "",
+    subjectLineOnlyContentSourceCopy: content_group_params.subject_line_only_content_source_copy ?? null,
+    slateRepurposeTemplateContentSourceCopy: content_group_params.slate_repurpose_template_content_source_copy ?? null,
+    targets: content_params?.targets ?? {},
+    customInstructions: content_group_params.custom_instructions ?? [],
+    template_settings: content_group_params.template_settings ?? null,
+    components: components,  
+    results: content.results,
+    initialSetup: content_group_params.initialSetup ?? false, 
+    template: content_group_params.template ?? null,
+    contentCollection: content_group_params.content_collection ?? null,
+    reviewedContentList:
       content_group_params.reviewed_content_list ?? [],
-    [Keys.hasAnalysisRun]: content_group_params.hasAnalysisRun,
-  } as ShapedContentData;
+    hasAnalysisRun: content_group_params.hasAnalysisRun ?? false,
+  };
 };
 
 export const shapedCampaignData = (campaign: Campaign): ShapedCampaignData => {
   const campaignParams = campaign.campaign_params;
   return {
-    [CampaignKeys.campaignId]: campaign.id,
-    [CampaignKeys.playbookId]: campaign?.playbook,
-    [CampaignKeys.campaignName]: campaign?.campaign_name ?? "",
-    [CampaignKeys.campaignGoal]: campaignParams?.campaign_goal ?? "",
-    [CampaignKeys.contentGroups]: campaign?.content_groups ?? [],
-    [CampaignKeys.campaignStage]: campaignParams?.campaign_stage ?? "",
-    [CampaignKeys.targets]: campaignParams?.targets ?? [],
-    [CampaignKeys.assets]: campaignParams?.assets ?? {},
-    [CampaignKeys.foundationModel]: campaignParams?.foundation_model ?? "",
-    [CampaignKeys.allSelectedTargets]: campaignParams?.allSelectedTargets ?? [],
-    [CampaignKeys.customInstructions]:
-      campaignParams?.custom_instructions ?? [],
-    [CampaignKeys.genStatus]: campaign.campaign_status?.gen_status ?? {},
-    [CampaignKeys.enableAutoSync]: campaignParams?.enable_auto_sync ?? false,
-    [CampaignKeys.inboundLandingPages]: {
+    campaignId: campaign.id,
+    playbookId: campaign?.playbook,
+    campaignName: campaign?.campaign_name ?? "",
+    campaignGoal: campaignParams?.campaign_goal ?? "",
+    contentGroups: campaign?.content_groups ?? [],
+    campaignStage: campaignParams?.campaign_stage ?? "",
+    targets: campaignParams?.targets ?? [],
+    assets: campaignParams?.assets ?? {},
+    foundationModel: campaignParams?.foundation_model ?? "",
+    allSelectedTargets: campaignParams?.allSelectedTargets ?? [],
+    customInstructions: campaignParams?.custom_instructions ?? [],
+    genStatus: campaign.campaign_status?.gen_status ?? {},
+    enableAutoSync: campaignParams?.enable_auto_sync ?? false,
+    inboundLandingPages: {
       enabled: campaignParams?.inbound_landing_pages?.enabled ?? false,
       selectedTargetField: campaignParams?.inbound_landing_pages?.target_field,
     },
-  } as ShapedCampaignData;
+  };
 };
 
 export const calculateFixedButtonsPaddingRight = (panelWidth: number) => {

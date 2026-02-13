@@ -32,29 +32,29 @@ export interface Content {
 }
 
 export interface ShapedContentData {
-  [Keys.contentId]: number;
-  [Keys.contentGroup]: number | "";
-  [Keys.campaignId]: number | "";
-  [Keys.contentName]: string;
-  [Keys.contentGroupName]: string;
-  [Keys.contentType]: string;
-  [Keys.contentSourceUploadMethod]: string;
-  [Keys.contentSourceFormat]: string;
-  [Keys.contentSource]: string;
-  [Keys.contentSourceCopy]: string;
-  [Keys.repurposeTemplateContentSourceCopy]: string;
-  [Keys.subjectLineOnlyContentSourceCopy]: string | null;
-  [Keys.slateRepurposeTemplateContentSourceCopy]: string | null;
-  [Keys.targets]: Record<string, string>;
-  [Keys.customInstructions]: unknown[];
-  [Keys.template_settings]: TemplateSettings | null;
-  [Keys.components]: Record<string, any>;
-  [Keys.results]: any[];
-  [Keys.initialSetup]: boolean;
-  [Keys.template]: string | null;
-  [Keys.contentCollection]: string | null;
-  [Keys.reviewedContentList]: unknown[];
-  [Keys.hasAnalysisRun]: boolean;
+  contentId: number;
+  contentGroup: number;
+  campaignId: number;
+  contentName: string;
+  contentGroupName: string;
+  contentType: string;
+  contentSourceUploadMethod: string;
+  contentSourceFormat: string;
+  contentSource: string;
+  contentSourceCopy: string;
+  repurposeTemplateContentSourceCopy: string;
+  subjectLineOnlyContentSourceCopy: string | null;
+  slateRepurposeTemplateContentSourceCopy: string | null;
+  targets: Record<string, string>;
+  customInstructions: unknown[];
+  template_settings: TemplateSettings | null;
+  components: Record<string, any>;
+  results: any[];
+  initialSetup: boolean;
+  template: string | null;
+  contentCollection: string | null;
+  reviewedContentList: unknown[];
+  hasAnalysisRun: boolean;
 }
 
 export interface ContentGroup {
@@ -101,20 +101,20 @@ export interface ContentGroup {
 
 /** Shaped campaign returned by shapedCampaignData – use when consuming campaign from useFetchCampaign or similar. */
 export interface ShapedCampaignData {
-  [CampaignKeys.campaignId]: number;
-  [CampaignKeys.playbookId]: number;
-  [CampaignKeys.campaignName]: string;
-  [CampaignKeys.campaignGoal]: string;
-  [CampaignKeys.contentGroups]: ContentGroup[];
-  [CampaignKeys.campaignStage]: string;
-  [CampaignKeys.targets]: Array<Record<string, string[]>>;
-  [CampaignKeys.assets]: Record<string, any>;
-  [CampaignKeys.foundationModel]: string;
-  [CampaignKeys.allSelectedTargets]: any[];
-  [CampaignKeys.customInstructions]: any[];
-  [CampaignKeys.genStatus]: Record<string, any>;
-  [CampaignKeys.enableAutoSync]: boolean;
-  [CampaignKeys.inboundLandingPages]: {
+  campaignId: number;
+  playbookId: number;
+  campaignName: string;
+  campaignGoal: string;
+  contentGroups: ContentGroup[];
+  campaignStage: string;
+  targets: Array<Record<string, string[]>>;
+  assets: Record<string, any>;
+  foundationModel: string;
+  allSelectedTargets: any[];
+  customInstructions: any[];
+  genStatus: Record<string, any>;
+  enableAutoSync: boolean;
+  inboundLandingPages: {
     enabled: boolean;
     selectedTargetField?: any;
   };

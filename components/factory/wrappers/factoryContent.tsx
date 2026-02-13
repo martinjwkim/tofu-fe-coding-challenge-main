@@ -9,7 +9,7 @@ type FactoryContentProps = {
 const FactoryContent = ({ content, campaign }: FactoryContentProps) => {
   return (
     <div className="w-full h-full overflow-y-auto">
-      <Web content={content} campaign={campaign} />
+      <Web content={content} />
     </div>
   );
 };

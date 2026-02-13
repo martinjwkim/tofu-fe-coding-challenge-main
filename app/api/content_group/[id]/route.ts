@@ -29,18 +29,9 @@ export async function PATCH(
       );
     }
 
-    // Handle component updates specifically
-    if (updates.components) {
-      // If components don't exist yet, initialize the object
-      if (!contentGroups[contentGroupIndex].components) {
-        contentGroups[contentGroupIndex].components = {};
-      }
-
-      // Merge the new components with existing ones
-      contentGroups[contentGroupIndex].components = {
-        ...contentGroups[contentGroupIndex].components,
-        ...updates.components,
-      };
+    // Handle component updates specifically – replace (don't merge) so removals take effect
+    if (updates.components !== undefined) {
+      contentGroups[contentGroupIndex].components = { ...updates.components };
     } else {
       // Handle other updates
       Object.assign(contentGroups[contentGroupIndex], updates);

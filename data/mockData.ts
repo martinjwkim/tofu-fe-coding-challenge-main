@@ -1,4 +1,5 @@
 import { Campaign, Content, ContentGroup } from "@/types";
+import { GenStatuses } from "@/utils/factoryHelpers";
 
 export const mockContent: Content = {
   id: 1,
@@ -18,6 +19,7 @@ export const mockContent: Content = {
   updated_at: "2025-04-28T17:19:58.956598-07:00",
   created_at: "2025-04-28T17:19:58.956368-07:00",
   results: [],
+  genStatus: GenStatuses.None,
 };
 
 export const mockContentGroup: ContentGroup = {

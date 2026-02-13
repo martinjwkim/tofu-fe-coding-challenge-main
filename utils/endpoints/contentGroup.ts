@@ -10,7 +10,7 @@ export async function fetchContentGroup(id: number): Promise<ContentGroup> {
 
 export async function updateContentGroup(
   id: number,
-  payload: any
+  payload,
 ): Promise<any> {
   return await apiHandler({
     method: "PATCH",

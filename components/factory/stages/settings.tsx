@@ -1,14 +1,68 @@
 import { useMemo } from "react";
+import { XMarkIcon } from "@heroicons/react/20/solid";
 import Accordion from "../../../components/core/accordion";
 import { ShapedContentData, ShapedCampaignData } from "@/types";
+import { useUpdateContentGroup } from "@/hooks/api/contentGroup";
 
 type SettingsProps = {
   content: ShapedContentData;
   campaign: ShapedCampaignData;
 };
 
+const MAX_PREVIEW_LENGTH = 60;
+
+type SelectedItemProps = {
+  id: string;
+  data: { text?: string };
+  index: number;
+  onRemove: (id: string) => void;
+};
+
+function SelectedItem({ id, data, index, onRemove }: SelectedItemProps) {
+  const text = (data?.text ?? "").trim() || "(empty)";
+  const preview =
+    text.length <= MAX_PREVIEW_LENGTH
+      ? text
+      : `${text.slice(0, MAX_PREVIEW_LENGTH)}…`;
+
+  return (
+    <li
+      className="flex items-center gap-1 rounded border border-slate-200 px-3 py-1 text-sm text-slate-800"
+    >
+      <span className="flex h-4 w-4 shrink-0 items-center justify-center rounded text-sm font-medium">
+        {index + 1}.
+      </span>
+      <span className="min-w-0 flex-1 truncate" title={text}>
+        {preview}
+      </span>
+      <button
+        type="button"
+        onClick={() => onRemove(id)}
+        className="rounded text-slate-500 hover:bg-slate-200 hover:text-slate-700"
+        aria-label={`Remove component ${index + 1}`}
+      >
+        <XMarkIcon className="h-4 w-4" aria-hidden />
+      </button>
+    </li>
+  );
+}
+
 const Settings = ({ content, campaign }: SettingsProps) => {
   const windowWidth = useMemo(() => window?.innerWidth, [window?.innerWidth]);
+  const { updateContentGroup } = useUpdateContentGroup();
+
+  const selectedComponents = useMemo(
+    () => Object.entries(content.components ?? {}),
+    [content.components]
+  );
+
+  const handleRemoveComponent = (idToRemove: string) => {
+    const { [idToRemove]: _, ...rest } = content.components ?? {};
+    updateContentGroup({
+      id: content.contentGroup,
+      payload: { components: rest },
+    });
+  };
 
   const accordionLabel = (number, text, stage) => {
     let preText = <span className="pl-1 pr-2">{number}.</span>;
@@ -54,6 +108,19 @@ const Settings = ({ content, campaign }: SettingsProps) => {
                 On the canvas, select components that you want Tofu to
                 personalize. We’ll generate multiple options for each component.
               </p>
+              {selectedComponents.length > 0 && (
+                <ul className="mt-3 flex flex-col gap-2" data-testid="selected-elements-list">
+                  {selectedComponents.map(([id, data], index) => (
+                    <SelectedItem
+                      key={id}
+                      id={id}
+                      data={data}
+                      index={index}
+                      onRemove={handleRemoveComponent}
+                    />
+                  ))}
+                </ul>
+              )}
             </div>
           </Accordion>
         </div>
