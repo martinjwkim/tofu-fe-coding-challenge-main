@@ -5,7 +5,7 @@ const WEBSITE_IFRAME_HTML_ID = "website-iframe";
 
 const Web = () => {
   const iframeRef = useRef(null);
-  const [htmlContent, setHtmlContent] = useState(null);
+  const [htmlContent, setHtmlContent] = useState<string | undefined>(undefined);
   const [fetchingHtml, setFetchingHtml] = useState(false);
 
   const fetchAndSetHtml = async (url) => {
