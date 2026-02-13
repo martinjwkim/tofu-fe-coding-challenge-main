@@ -17,7 +17,7 @@ const PersonalizationFactoryBodySettings = ({ content, campaign }: Personalizati
   };
 
   return (
-    <div className="flex flex-col h-[calc(100vh-50px)] bg-white">
+    <div className="flex flex-col h-[100vh] bg-white">
       <PanelGroup direction="horizontal" onLayout={handleResize}>
         <Panel defaultSize={25} minSize={20} maxSize={80}>
           <div className="z-10 w-full h-full mb-40 overflow-x-hidden overflow-y-scroll flex flex-col items-start">

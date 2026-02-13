@@ -7,8 +7,10 @@ import {
   ListboxOptions,
 } from "@headlessui/react";
 import Accordion from "../../../components/core/accordion";
+import Spinner from "@/components/core/spinner";
 import { ShapedContentData, ShapedCampaignData } from "@/types";
 import { useUpdateContentGroup } from "@/hooks/api/contentGroup";
+import { useUpdateContent, useContentGeneration } from "@/hooks/api/content";
 
 type SettingsProps = {
   content: ShapedContentData;
@@ -61,14 +63,7 @@ function TargetDropdown({ targets, value, onChange }: TargetDropdownProps) {
           <ListboxOption
             key={`${opt.groupName}-${opt.value}`}
             value={opt}
-            className={({ selected }) =>
-              [
-                "w-full cursor-pointer select-none py-2 pl-3 pr-9 text-slate-900",
-                selected ? "bg-primary-light" : "hover:bg-slate-100",
-              ]
-                .filter(Boolean)
-                .join(" ")
-            }
+            className={({ selected }) => `w-full cursor-pointer select-none py-2 pl-3 pr-9 text-slate-900 ${selected ? "bg-primary-light" : "hover:bg-slate-100"}`}
           >
             {opt.value}
           </ListboxOption>
@@ -119,12 +114,36 @@ function SelectedItem({ id, data, index, onRemove }: SelectedItemProps) {
 const Settings = ({ content, campaign }: SettingsProps) => {
   const windowWidth = useMemo(() => window?.innerWidth, [window?.innerWidth]);
   const { updateContentGroup } = useUpdateContentGroup();
+  const { updateContent } = useUpdateContent();
+  const { generateContent, isLoading: isGenerating } = useContentGeneration();
   const [selectedTarget, setSelectedTarget] = useState<SelectedTarget>(null);
 
   const selectedComponents = useMemo(
     () => Object.entries(content.components ?? {}),
     [content.components]
   );
+
+  const canGenerate =
+    selectedTarget !== null && selectedComponents.length > 0;
+
+  const handleGenerate = async () => {
+    if (!selectedTarget || !content.contentId) return;
+    const targetsPayload = { [selectedTarget.groupName]: selectedTarget.value };
+    await updateContent({
+      id: content.contentId,
+      payload: {
+        content_params: { targets: targetsPayload },
+        components: content.components ?? {},
+      },
+    });
+    await generateContent({
+      id: content.contentId,
+      payload: {
+        params: { joint_generation: false },
+        targets: targetsPayload,
+      },
+    });
+  };
 
   const handleRemoveComponent = (idToRemove: string) => {
     const { [idToRemove]: _, ...rest } = content.components ?? {};
@@ -158,7 +177,7 @@ const Settings = ({ content, campaign }: SettingsProps) => {
   };
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col h-full">
       <div className="flex-grow">
         <div>
           <Accordion
@@ -229,7 +248,26 @@ const Settings = ({ content, campaign }: SettingsProps) => {
           </Accordion>
         </div>
       </div>
-
+      <div className="flex bottom-0 mt-4 pt-3 bg-white border-t border-slate-200 gap-2">
+        <button
+          type="button"
+          className="flex-1 min-w-0 border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+        >
+          Back
+        </button>
+        <button
+          type="button"
+          disabled={!canGenerate || isGenerating}
+          onClick={handleGenerate}
+          className="flex-1 min-w-0 bg-primary px-4 py-2 text-sm font-medium text-white shadow hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none flex items-center justify-center"
+        >
+          {isGenerating ? (
+            <Spinner size="sm" theme="transparent" />
+          ) : (
+            "Generate"
+          )}
+        </button>
+      </div>
     </div>
   );
 };

@@ -17,7 +17,7 @@ export const PersonalizationFactoryControlSettings = ({
   return (
     <>
       <div className="w-full h-full flex flex-col items-start">
-        <div className="w-full grow flex flex-col p-6 gap-y-6 pb-40 text-neutral-700 bg-white">
+        <div className="w-full grow flex flex-col p-6 text-neutral-700 bg-white">
           <div className="h-full">
             <Settings content={content} campaign={campaign} />
             <div

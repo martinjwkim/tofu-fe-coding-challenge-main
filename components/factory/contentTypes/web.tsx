@@ -137,6 +137,33 @@ const Web = ({ content }: WebProps) => {
     return () => cleanupRef.current?.();
   }, [iframeReady, htmlContent, content, updateContentGroup]);
 
+  // Apply latest result variations to iframe (personalized text per component)
+  useEffect(() => {
+    const doc = iframeRef.current?.contentDocument;
+    if (!iframeReady || !doc || !content.results?.length) return;
+
+    const result = content.results[content.results.length - 1];
+    const variations = result?.variations;
+    if (!variations) return;
+
+    Object.entries(variations).forEach(([componentId, v]) => {
+      const variation = v as {
+        meta?: {
+          current_version?: { text?: string };
+          variations?: Array<{ text?: string }>;
+        };
+      };
+      const text =
+        variation?.meta?.current_version?.text ??
+        variation?.meta?.variations?.[0]?.text;
+      if (text == null) return;
+      const el = doc.querySelector(
+        `[data-tofu-id="${componentId}"]`
+      ) as HTMLElement | null;
+      if (el) el.textContent = text;
+    });
+  }, [iframeReady, content.results, content]);
+
   return (
     <div className="relative w-full h-full">
       {!htmlContent && (

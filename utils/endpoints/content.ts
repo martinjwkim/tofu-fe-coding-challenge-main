@@ -8,7 +8,7 @@ export async function fetchContent(id: number): Promise<Content> {
   });
 }
 
-export async function updateContent(id: number, payload: any): Promise<any> {
+export async function updateContent(id: number, payload: any): Promise<Content> {
   return await apiHandler({
     method: "PATCH",
     url: `/api/content/${id}`,
@@ -19,7 +19,7 @@ export async function updateContent(id: number, payload: any): Promise<any> {
 export async function contentGeneration(
   id: number,
   payload: any
-): Promise<any> {
+): Promise<Content> {
   return await apiHandler({
     method: "POST",
     url: `/api/content/${id}/gen/`,

@@ -6,6 +6,7 @@ import {
 } from "../../utils/endpoints/content";
 import merge from "lodash/fp/merge";
 import { UpdateParams, UpdateContext } from "types/generic";
+import { Content } from "@/types";
 
 export const useFetchContent = (id: number) => {
   return useQuery({
@@ -29,7 +30,7 @@ export const useUpdateContent = () => {
   const queryClient = useQueryClient();
 
   const { mutateAsync, isLoading, error, isSuccess } = useMutation<
-    ReturnType<typeof updateContent>,
+    Awaited<ReturnType<typeof updateContent>>,
     Error,
     UpdateParams,
     UpdateContext
@@ -78,7 +79,7 @@ export const useContentGeneration = () => {
   const queryClient = useQueryClient();
 
   const { mutateAsync, isLoading, error, isSuccess } = useMutation<
-    ReturnType<typeof updateContent>,
+    Content,
     Error,
     UpdateParams,
     UpdateContext
@@ -88,10 +89,9 @@ export const useContentGeneration = () => {
     },
     {
       onSuccess: (data, { id }) => {
-        // merge data into content.results as an array
         queryClient.setQueryData(["content", id], (currentContent: any) => {
           const updatedContent = { ...currentContent };
-          updatedContent.results = [data];
+          updatedContent.results = data?.results ?? [];
           return updatedContent;
         });
         queryClient.invalidateQueries({ queryKey: ["content", id] });
