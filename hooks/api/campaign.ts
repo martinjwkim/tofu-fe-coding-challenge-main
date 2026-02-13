@@ -5,19 +5,10 @@ export const useFetchCampaign = (
   campaignId: number,
   refetchOnWindowFocus = true
 ) => {
-  const queryKey = ["campaign", campaignId];
-
-  const {
-    data: campaign,
-    isLoading,
-    isFetching,
-    error,
-    refetch,
-  } = useQuery({
-    queryKey,
-    queryFn: async () => await fetchCampaign(campaignId),
+  return useQuery({
+    queryKey: ["campaign", campaignId],
+    queryFn: () => fetchCampaign(campaignId),
     enabled: !!campaignId,
     refetchOnWindowFocus,
   });
-  return { campaign, isLoading, isFetching, error, refetch };
 };

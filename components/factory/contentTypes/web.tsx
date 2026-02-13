@@ -1,14 +1,20 @@
 import React, { useEffect, useRef, useState } from "react";
 import Spinner from "@/components/core/spinner";
+import { ShapedContentData, ShapedCampaignData } from "@/types";
 
 const WEBSITE_IFRAME_HTML_ID = "website-iframe";
 
-const Web = () => {
-  const iframeRef = useRef(null);
-  const [htmlContent, setHtmlContent] = useState<string | undefined>(undefined);
-  const [fetchingHtml, setFetchingHtml] = useState(false);
+type WebProps = {
+  content: ShapedContentData;
+  campaign: ShapedCampaignData;
+};
 
-  const fetchAndSetHtml = async (url) => {
+const Web = ({ content, campaign }: WebProps) => {
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+  const [htmlContent, setHtmlContent] = useState<string | undefined>(undefined);
+  const [fetchingHtml, setFetchingHtml] = useState<boolean>(false);
+
+  const fetchAndSetHtml = async (url: string) => {
     try {
       const response = await fetch(url);
       const html = await response.text();
@@ -30,7 +36,6 @@ const Web = () => {
   }, []);
 
   return (
-    <>
       <div className="relative w-full h-full">
         {fetchingHtml && (
           <div className="absolute left-0 w-full h-full bg-white">
@@ -44,9 +49,8 @@ const Web = () => {
           ref={iframeRef}
           referrerPolicy="no-referrer"
           sandbox="allow-same-origin allow-scripts"
-        ></iframe>
+        />
       </div>
-    </>
   );
 };
 

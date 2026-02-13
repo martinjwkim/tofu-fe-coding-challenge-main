@@ -3,8 +3,14 @@ import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 import FactoryContent from "../factoryContent";
 import { PersonalizationFactoryControlSettings } from "../factoryControlSettings/personalizationFactoryControlSettings";
 import { calculateFixedButtonsPaddingRight } from "utils/factoryHelpers";
+import { ShapedCampaignData, ShapedContentData } from "@/types";
 
-const PersonalizationFactoryBodySettings = ({ content, campaign }) => {
+type PersonalizationFactoryBodySettingsProps = {
+  content: ShapedContentData;
+  campaign: ShapedCampaignData;
+};
+
+const PersonalizationFactoryBodySettings = ({ content, campaign }: PersonalizationFactoryBodySettingsProps) => {
   const [leftPanelSize, setLeftPanelSize] = useState(25);
   const handleResize = (sizes: number[]) => {
     setLeftPanelSize(sizes[0]);
@@ -20,13 +26,15 @@ const PersonalizationFactoryBodySettings = ({ content, campaign }) => {
               fixedButtonsPaddingRight={calculateFixedButtonsPaddingRight(
                 leftPanelSize
               )}
+              content={content}
+              campaign={campaign}
             />
           </div>
         </Panel>
         <PanelResizeHandle className="w-[2px] bg-gray-200 hover:bg-primary transition-colors focus:bg-primary" />
         <Panel>
           <div className="w-full h-full relative overflow-y-scroll">
-            <FactoryContent />
+            <FactoryContent content={content} campaign={campaign} />
           </div>
         </Panel>
       </PanelGroup>
@@ -35,8 +43,8 @@ const PersonalizationFactoryBodySettings = ({ content, campaign }) => {
 };
 
 type FactoryBodySettingsWrapperProps = {
-  content: any;
-  campaign: any;
+  content: ShapedContentData;
+  campaign: ShapedCampaignData;
 };
 
 const FactoryBodySettingsWrapper = ({

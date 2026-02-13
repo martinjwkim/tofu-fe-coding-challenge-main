@@ -1,3 +1,5 @@
+import { CampaignKeys, GenStatus, Keys } from "@/utils/factoryHelpers";
+
 export interface TemplateSettings {
   follow_tone: boolean;
   follow_length: boolean;
@@ -26,6 +28,33 @@ export interface Content {
   updated_at: string;
   created_at: string;
   results: any[];
+  genStatus: GenStatus;
+}
+
+export interface ShapedContentData {
+  [Keys.contentId]: number;
+  [Keys.contentGroup]: number | "";
+  [Keys.campaignId]: number | "";
+  [Keys.contentName]: string;
+  [Keys.contentGroupName]: string;
+  [Keys.contentType]: string;
+  [Keys.contentSourceUploadMethod]: string;
+  [Keys.contentSourceFormat]: string;
+  [Keys.contentSource]: string;
+  [Keys.contentSourceCopy]: string;
+  [Keys.repurposeTemplateContentSourceCopy]: string;
+  [Keys.subjectLineOnlyContentSourceCopy]: string | null;
+  [Keys.slateRepurposeTemplateContentSourceCopy]: string | null;
+  [Keys.targets]: Record<string, string>;
+  [Keys.customInstructions]: unknown[];
+  [Keys.template_settings]: TemplateSettings | null;
+  [Keys.components]: Record<string, any>;
+  [Keys.results]: any[];
+  [Keys.initialSetup]: boolean;
+  [Keys.template]: string | null;
+  [Keys.contentCollection]: string | null;
+  [Keys.reviewedContentList]: unknown[];
+  [Keys.hasAnalysisRun]: boolean;
 }
 
 export interface ContentGroup {
@@ -36,7 +65,7 @@ export interface ContentGroup {
   content_group_name: string;
   content_group_params: {
     content_type: string;
-    initialSetup: boolean;
+    initialSetup?: boolean;
     content_source: string;
     template_settings: TemplateSettings;
     content_source_copy: string;
@@ -45,6 +74,13 @@ export interface ContentGroup {
     export_content_source_copy: string;
     content_source_upload_method: string;
     subject_line_only_content_source_copy: null | string;
+    repurpose_template_content_source_copy?: string;
+    custom_instructions?: unknown[];
+    template?: string | null;
+    content_collection?: string | null;
+    reviewed_content_list?: unknown[];
+    hasAnalysisRun?: boolean;
+    slate_repurpose_template_content_source_copy?: string | null;
   };
   content_group_status: {
     status: string;
@@ -63,6 +99,27 @@ export interface ContentGroup {
   created_at: string;
 }
 
+/** Shaped campaign returned by shapedCampaignData – use when consuming campaign from useFetchCampaign or similar. */
+export interface ShapedCampaignData {
+  [CampaignKeys.campaignId]: number;
+  [CampaignKeys.playbookId]: number;
+  [CampaignKeys.campaignName]: string;
+  [CampaignKeys.campaignGoal]: string;
+  [CampaignKeys.contentGroups]: ContentGroup[];
+  [CampaignKeys.campaignStage]: string;
+  [CampaignKeys.targets]: Array<Record<string, string[]>>;
+  [CampaignKeys.assets]: Record<string, any>;
+  [CampaignKeys.foundationModel]: string;
+  [CampaignKeys.allSelectedTargets]: any[];
+  [CampaignKeys.customInstructions]: any[];
+  [CampaignKeys.genStatus]: Record<string, any>;
+  [CampaignKeys.enableAutoSync]: boolean;
+  [CampaignKeys.inboundLandingPages]: {
+    enabled: boolean;
+    selectedTargetField?: any;
+  };
+}
+
 export interface Campaign {
   id: number;
   creator: number;
@@ -76,6 +133,13 @@ export interface Campaign {
     is_campaign_v3: boolean;
     targets_concat: boolean;
     allSelectedTargets: any[];
+    foundation_model?: string;
+    custom_instructions?: any[];
+    enable_auto_sync?: boolean;
+    inbound_landing_pages?: {
+      enabled?: boolean;
+      target_field?: any;
+    };
   };
   campaign_status: {
     gen_status: {

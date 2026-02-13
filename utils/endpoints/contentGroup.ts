@@ -1,6 +1,7 @@
+import { ContentGroup } from "@/types";
 import { apiHandler } from "./apiHandler";
 
-export async function fetchContentGroup(id: number): Promise<any> {
+export async function fetchContentGroup(id: number): Promise<ContentGroup> {
   return await apiHandler({
     method: "GET",
     url: `/api/content_group/${id}`,

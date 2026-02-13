@@ -1,13 +1,22 @@
+import {
+  Content,
+  ContentGroup,
+  Campaign,
+  ShapedContentData,
+  ShapedCampaignData,
+} from "@/types";
+
 export const tofuElementClass = "tofu-element";
 export const tofuHoveredElement = "tofu-hovered-element";
 export const selectDecorator = "tofu-selected-element";
 export const hideTofuDecorator = "tofu-hide-element";
 
-export const GenStatus = {
+export const GenStatuses = {
   None: "None", // Begin state. No results generated yet.
   Progress: "Progress", // User clicked on 'Generate' button, and generation is in progress
   Done: "Done", // Generated results have been returned from BE.
 };
+export type GenStatus = typeof GenStatuses[keyof typeof GenStatuses];
 
 // content group fields which are related to content settings
 export const p13nContentSettingsFields = ["components", "content_group_params"];
@@ -65,48 +74,48 @@ export const Keys = {
   hubspotEmailId: "hubspotEmailId",
 };
 
-export const initialContentState = {
-  genStatus: GenStatus.None,
-  contentName: "",
-  contentId: "",
-  contentType: "",
-  contentSourceUploadMethod: "",
-  contentSourceFormat: "",
-  contentSource: "",
-  contentSourceCopy: "",
-  components: {}, // components we want to change
-  targets: {}, // targets we want to customize across
-  assets: {}, // assets we want to reference for generation
-  results: [], // results with variations
-  customInstructions: [], // custom instructions we want to add for this content
-  contentGroup: "", // optional content group
-  contentGroupName: "",
-  // TODO: playbook should be removed from here
-  playbook: {},
-  campaignId: "",
+export const initialContentState: Content = {
+  id: 0,
+  creator: 0,
+  playbook: 0,
+  campaign: 0,
+  content_group: 0,
+  content_name: "",
+  content_params: {},
+  components: {},
+  updated_at: "",
+  created_at: "",
+  results: [],
+  genStatus: GenStatuses.None,
 };
 
-export const initialCampaignState = {
-  campaignId: "",
-  campaignName: "",
-  campaignGoal: "",
-  campaignStage: "",
-  contentGroups: [],
-  playbookId: "",
-  customInstructions: [],
-  foundationModel: "",
-  assets: {},
-  targets: [],
-  genStatus: {},
-  enableAutoSync: false,
+export const initialCampaignState: ShapedCampaignData = {
+  [CampaignKeys.campaignId]: 0,
+  [CampaignKeys.playbookId]: 0,
+  [CampaignKeys.campaignName]: "",
+  [CampaignKeys.campaignGoal]: "",
+  [CampaignKeys.campaignStage]: "",
+  [CampaignKeys.contentGroups]: [],
+  [CampaignKeys.targets]: [],
+  [CampaignKeys.assets]: {},
+  [CampaignKeys.foundationModel]: "",
+  [CampaignKeys.allSelectedTargets]: [],
+  [CampaignKeys.customInstructions]: [],
+  [CampaignKeys.genStatus]: {},
+  [CampaignKeys.enableAutoSync]: false,
+  [CampaignKeys.inboundLandingPages]: {
+    enabled: false,
+  },
 };
 
-export const shapedContentData = (content, contentGroup) => {
-  const { content_params = {} } = content;
-  const { content_group_params = {} } = contentGroup;
-  const components = contentGroup.components;
+export const shapedContentData = (
+  content: Content,
+  contentGroup: ContentGroup
+): ShapedContentData => {
+  const { content_params } = content;
+  const { content_group_params, components } = contentGroup;
 
-  const shapedContent = {
+  return {
     [Keys.contentId]: content.id,
     [Keys.contentGroup]: content?.content_group ?? "",
     [Keys.campaignId]: content?.campaign ?? "",
@@ -135,14 +144,12 @@ export const shapedContentData = (content, contentGroup) => {
     [Keys.reviewedContentList]:
       content_group_params.reviewed_content_list ?? [],
     [Keys.hasAnalysisRun]: content_group_params.hasAnalysisRun,
-  };
-
-  return shapedContent;
+  } as ShapedContentData;
 };
 
-export const shapedCampaignData = (campaign) => {
+export const shapedCampaignData = (campaign: Campaign): ShapedCampaignData => {
   const campaignParams = campaign.campaign_params;
-  const campaignChange = {
+  return {
     [CampaignKeys.campaignId]: campaign.id,
     [CampaignKeys.playbookId]: campaign?.playbook,
     [CampaignKeys.campaignName]: campaign?.campaign_name ?? "",
@@ -152,7 +159,7 @@ export const shapedCampaignData = (campaign) => {
     [CampaignKeys.targets]: campaignParams?.targets ?? [],
     [CampaignKeys.assets]: campaignParams?.assets ?? {},
     [CampaignKeys.foundationModel]: campaignParams?.foundation_model ?? "",
-    [CampaignKeys.allSelectedTargets]: campaignParams?.allSelectedTargets,
+    [CampaignKeys.allSelectedTargets]: campaignParams?.allSelectedTargets ?? [],
     [CampaignKeys.customInstructions]:
       campaignParams?.custom_instructions ?? [],
     [CampaignKeys.genStatus]: campaign.campaign_status?.gen_status ?? {},
@@ -161,9 +168,7 @@ export const shapedCampaignData = (campaign) => {
       enabled: campaignParams?.inbound_landing_pages?.enabled ?? false,
       selectedTargetField: campaignParams?.inbound_landing_pages?.target_field,
     },
-  };
-
-  return campaignChange;
+  } as ShapedCampaignData;
 };
 
 export const calculateFixedButtonsPaddingRight = (panelWidth: number) => {

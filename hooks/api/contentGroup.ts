@@ -6,22 +6,12 @@ import {
 import merge from "lodash/fp/merge";
 import { UpdateParams, UpdateContext } from "types/generic";
 
-export const useFetchContentGroup = (id) => {
-  const {
-    data: contentGroup,
-    isLoading,
-    error,
-    refetch,
-  } = useQuery({
+export const useFetchContentGroup = (id: number) => {
+  return useQuery({
     queryKey: ["contentGroup", id],
-    queryFn: async () => {
-      const contentGroup = await fetchContentGroup(id);
-      return contentGroup;
-    },
+    queryFn: () => fetchContentGroup(id),
     enabled: !!id,
   });
-
-  return { contentGroup, isLoading, error, refetch };
 };
 
 function mergeWithOverride(oldData, payload) {

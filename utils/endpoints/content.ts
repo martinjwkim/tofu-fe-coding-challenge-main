@@ -1,6 +1,7 @@
+import { Content } from "@/types";
 import { apiHandler } from "./apiHandler";
 
-export async function fetchContent(id: number): Promise<any> {
+export async function fetchContent(id: number): Promise<Content> {
   return await apiHandler({
     method: "GET",
     url: `/api/content/${id}`,

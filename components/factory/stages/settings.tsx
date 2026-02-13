@@ -1,7 +1,13 @@
 import { useMemo } from "react";
 import Accordion from "../../../components/core/accordion";
+import { ShapedContentData, ShapedCampaignData } from "@/types";
 
-const Settings = () => {
+type SettingsProps = {
+  content: ShapedContentData;
+  campaign: ShapedCampaignData;
+};
+
+const Settings = ({ content, campaign }: SettingsProps) => {
   const windowWidth = useMemo(() => window?.innerWidth, [window?.innerWidth]);
 
   const accordionLabel = (number, text, stage) => {

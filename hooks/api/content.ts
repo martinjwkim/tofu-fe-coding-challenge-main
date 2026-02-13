@@ -8,21 +8,11 @@ import merge from "lodash/fp/merge";
 import { UpdateParams, UpdateContext } from "types/generic";
 
 export const useFetchContent = (id: number) => {
-  const {
-    data: contentData,
-    isLoading,
-    error,
-    refetch,
-  } = useQuery({
+  return useQuery({
     queryKey: ["content", id],
-    queryFn: async () => {
-      const content = await fetchContent(id);
-      return content;
-    },
+    queryFn: () => fetchContent(id),
     enabled: !!id,
   });
-
-  return { contentData, isLoading, error, refetch };
 };
 
 function mergeWithComponentOverride(oldData, payload) {

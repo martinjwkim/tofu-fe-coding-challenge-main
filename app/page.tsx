@@ -11,7 +11,6 @@ import {
   initialContentState,
   shapedContentData,
   shapedCampaignData,
-  initialCampaignState,
 } from "utils/factoryHelpers";
 
 import Spinner from "components/core/spinner";
@@ -22,14 +21,11 @@ export default function Content() {
   const searchParams = useSearchParams();
   const contentId = 1;
 
-  const { contentData = initialContentState } = useFetchContent(contentId);
-  const { contentGroup } = useFetchContentGroup(contentData?.content_group);
-  const {
-    campaign: campaignData = initialCampaignState,
-    isLoading: fetchingCampaign,
-  } = useFetchCampaign(contentData?.campaign);
+  const { data: contentData = initialContentState } = useFetchContent(contentId);
+  const { data: contentGroup } = useFetchContentGroup(contentData.content_group);
+  const { data: campaignData, isLoading } = useFetchCampaign(contentData.campaign);
 
-  const content: any = useMemo(() => {
+  const content = useMemo(() => {
     if (!contentData || !contentGroup) return;
     return shapedContentData(contentData, contentGroup);
   }, [contentData, contentGroup, searchParams]);
@@ -39,17 +35,15 @@ export default function Content() {
     return shapedCampaignData(campaignData);
   }, [campaignData]);
 
-  return (
-    <>
-      {!content || fetchingCampaign ? (
-        <div className="flex justify-center items-center h-[200px]">
-          <Spinner />
-        </div>
-      ) : (
-        <div className="w-full flex flex-col">
-          <FactoryBodySettingsWrapper content={content} campaign={campaign} />
-        </div>
-      )}
-    </>
+  if (!content || !campaign || isLoading) return (
+    <div className="flex justify-center items-center h-[200px]">
+      <Spinner />
+    </div>
   );
+
+  return (
+    <div className="w-full flex flex-col">
+      <FactoryBodySettingsWrapper content={content} campaign={campaign} />
+    </div>
+  )
 }
