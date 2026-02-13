@@ -1,5 +1,11 @@
-import { useMemo } from "react";
-import { XMarkIcon } from "@heroicons/react/20/solid";
+import { useMemo, useState } from "react";
+import { ChevronUpDownIcon, XMarkIcon } from "@heroicons/react/20/solid";
+import {
+  Listbox,
+  ListboxButton,
+  ListboxOption,
+  ListboxOptions,
+} from "@headlessui/react";
 import Accordion from "../../../components/core/accordion";
 import { ShapedContentData, ShapedCampaignData } from "@/types";
 import { useUpdateContentGroup } from "@/hooks/api/contentGroup";
@@ -8,6 +14,69 @@ type SettingsProps = {
   content: ShapedContentData;
   campaign: ShapedCampaignData;
 };
+
+/** Flatten campaign.targets (e.g. [{ "Group": ["A", "B"] }]) to { groupName, value }[]. */
+export function flattenTargets(
+  targets: Array<Record<string, string[]>> | undefined
+): { groupName: string; value: string }[] {
+  if (!targets?.length) return [];
+  const out: { groupName: string; value: string }[] = [];
+  for (const record of targets) {
+    for (const [groupName, values] of Object.entries(record)) {
+      if (Array.isArray(values)) {
+        values.forEach((value) => out.push({ groupName, value }));
+      }
+    }
+  }
+  return out;
+}
+
+export type SelectedTarget = { groupName: string; value: string } | null;
+
+type TargetDropdownProps = {
+  targets: Array<Record<string, string[]>>;
+  value: SelectedTarget;
+  onChange: (target: SelectedTarget) => void;
+};
+
+function TargetDropdown({ targets, value, onChange }: TargetDropdownProps) {
+  const options = useMemo(() => flattenTargets(targets), [targets]);
+  const displayLabel = value ? value.value : "Select a target…";
+
+  if (options.length === 0) return null;
+
+  return (
+    <Listbox value={value} onChange={onChange}>
+      <ListboxButton className="relative w-full cursor-default rounded-md border border-slate-300 bg-white py-2 pl-3 pr-10 text-left text-sm shadow-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary">
+        <span className="block truncate">{displayLabel}</span>
+        <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
+          <ChevronUpDownIcon className="h-5 w-5 text-slate-400" aria-hidden />
+        </span>
+      </ListboxButton>
+      <ListboxOptions
+        anchor="bottom"
+        className="mt-1 min-w-[12rem] max-h-60 overflow-auto rounded-md bg-white py-1 text-sm shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+      >
+        {options.map((opt) => (
+          <ListboxOption
+            key={`${opt.groupName}-${opt.value}`}
+            value={opt}
+            className={({ selected }) =>
+              [
+                "w-full cursor-pointer select-none py-2 pl-3 pr-9 text-slate-900",
+                selected ? "bg-primary-light" : "hover:bg-slate-100",
+              ]
+                .filter(Boolean)
+                .join(" ")
+            }
+          >
+            {opt.value}
+          </ListboxOption>
+        ))}
+      </ListboxOptions>
+    </Listbox>
+  );
+}
 
 const MAX_PREVIEW_LENGTH = 60;
 
@@ -27,7 +96,7 @@ function SelectedItem({ id, data, index, onRemove }: SelectedItemProps) {
 
   return (
     <li
-      className="flex items-center gap-1 rounded border border-slate-200 px-3 py-1 text-sm text-slate-800"
+      className="flex items-center gap-1 rounded border border-slate-200 px-3 py-2 text-sm text-slate-800"
     >
       <span className="flex h-4 w-4 shrink-0 items-center justify-center rounded text-sm font-medium">
         {index + 1}.
@@ -41,7 +110,7 @@ function SelectedItem({ id, data, index, onRemove }: SelectedItemProps) {
         className="rounded text-slate-500 hover:bg-slate-200 hover:text-slate-700"
         aria-label={`Remove component ${index + 1}`}
       >
-        <XMarkIcon className="h-4 w-4" aria-hidden />
+        <XMarkIcon className="h-5 w-5" aria-hidden />
       </button>
     </li>
   );
@@ -50,6 +119,7 @@ function SelectedItem({ id, data, index, onRemove }: SelectedItemProps) {
 const Settings = ({ content, campaign }: SettingsProps) => {
   const windowWidth = useMemo(() => window?.innerWidth, [window?.innerWidth]);
   const { updateContentGroup } = useUpdateContentGroup();
+  const [selectedTarget, setSelectedTarget] = useState<SelectedTarget>(null);
 
   const selectedComponents = useMemo(
     () => Object.entries(content.components ?? {}),
@@ -145,10 +215,21 @@ const Settings = ({ content, campaign }: SettingsProps) => {
                 Once we get it right, Tofu will apply those learnings to your
                 other targets.
               </p>
+              <div className="mt-2">
+                <label className="block text-sm font-medium text-slate-700 mb-1">
+                  Select target
+                </label>
+                <TargetDropdown
+                  targets={campaign.targets}
+                  value={selectedTarget}
+                  onChange={setSelectedTarget}
+                />
+              </div>
             </div>
           </Accordion>
         </div>
       </div>
+
     </div>
   );
 };
